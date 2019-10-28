@@ -19,7 +19,7 @@
   "dependencies": {
     "bignumber.js": "^9.0.0",
     "commander": "^3.0.2",
-    "jcc_exchange": "^2.0.3",
+    "jcc_exchange": "^2.0.4",
     "jcc_wallet": "^1.0.3"
   }
 }
