@@ -13,7 +13,7 @@ program
 const getOrders = async (address) => {
   const res = await axios.get("https://explorer.jccdex.cn/wallet/offer/e6236895?p=0&s=100&w=" + address);
   if (res.status === 200 && res.data.code === "0") {
-    return res.data.data.list;
+    return res.data.data;
   }
 }
 
@@ -39,13 +39,13 @@ const cancelOrders = async () => {
 
   while (true) {
     try {
-      const orders = await getOrders(address)
-      if (!Array.isArray(orders) || orders.length === 0) {
+      const { list, count } = await getOrders(address)
+      if (!Array.isArray(list) || list.length === 0) {
         break;
       }
       let hasFailed = false;
-      for (const key in orders) {
-        const seq = orders[key].seq;
+      for (const key in list) {
+        const seq = list[key].seq;
         try {
           const hash = await cancelOrder(address, secret, seq, key === 0 ? 0 : 1000);
           console.log("撤销成功: ", hash);
@@ -54,10 +54,12 @@ const cancelOrders = async () => {
           hasFailed = true;
         }
       }
-      if (!hasFailed) {
+      if (!hasFailed && list.length === count) {
         break;
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
