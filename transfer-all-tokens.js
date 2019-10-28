@@ -35,6 +35,15 @@ const transfer = (address, secret, amount, to, token, timeout = 1000) => {
   })
 }
 
+const handleLongDigits = (value) => {
+  let effectiveNumberLimit = value.sd();
+  if (effectiveNumberLimit > 15) {
+    return value.precision(15, 1).toString(10);
+  } else {
+    return value.toString(10);
+  }
+}
+
 const transferTokens = async () => {
   const { address, password, to } = program;
   const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
@@ -52,7 +61,8 @@ const transferTokens = async () => {
         // swt余额存在，且大于gas费0.0001
         if (new BigNumber(swtBalance.value).minus(swtBalance.freezed).gt(0.0001)) {
           try {
-            const amount = new BigNumber(swtBalance.value).minus(swtBalance.freezed).minus(0.0001).toString(10);
+            const transferSwtValue = new BigNumber(swtBalance.value).minus(swtBalance.freezed).minus(0.0001);
+            const amount = handleLongDigits(transferSwtValue);
             await transfer(address, secret, amount, to, "swt");
             console.log("转账成功:", swtBalance.currency);
             break;
@@ -72,7 +82,8 @@ const transferTokens = async () => {
         let hasFailed = false;
         for (const balance of filterBalances) {
           try {
-            const amount = new BigNumber(balance.value).minus(balance.freezed).toString(10);
+            const balanceValue = new BigNumber(balance.value).minus(balance.freezed);
+            const amount = handleLongDigits(balanceValue);
             await transfer(address, secret, amount, to, balance.currency);
             console.log("转账成功:", balance.currency);
           } catch (error) {
@@ -81,7 +92,8 @@ const transferTokens = async () => {
           }
         }
         try {
-          const amount = new BigNumber(swtBalance.value).minus(swtBalance.freezed).minus(gas).toString(10);
+          const swtBalanceValue = new BigNumber(swtBalance.value).minus(swtBalance.freezed).minus(gas);
+          const amount = handleLongDigits(swtBalanceValue);
           await transfer(address, secret, amount, to, "swt");
           console.log("转账成功:", swtBalance.currency);
         } catch (error) {
