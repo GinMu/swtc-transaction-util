@@ -43,6 +43,7 @@ password #密码
 node cancel-orders.js  -A $address -P $password
 
 # 转移所有资产
+# 针对转入钱包地址未激活的case, 未处理, 操作前请确保激活
 address #钱包地址
 password #密码
 to #转入钱包地址
