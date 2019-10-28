@@ -1,0 +1,25 @@
+{
+  "name": "swtc-transaction-util",
+  "version": "1.0.0",
+  "description": "命令行钱包操作和交易工具",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GinMu/swtc-transaction-util.git"
+  },
+  "author": "GinMu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GinMu/swtc-transaction-util/issues"
+  },
+  "homepage": "https://github.com/GinMu/swtc-transaction-util#readme",
+  "dependencies": {
+    "bignumber.js": "^9.0.0",
+    "commander": "^3.0.2",
+    "jcc_exchange": "^2.0.3",
+    "jcc_wallet": "^1.0.3"
+  }
+}

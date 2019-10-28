@@ -1,0 +1,64 @@
+const axios = require("axios");
+const program = require('commander');
+const fs = require("fs");
+const JCCExchange = require("jcc_exchange").JCCExchange;
+const JingchangWallet = require("jcc_wallet").JingchangWallet;
+
+program
+  .usage('[options] <file ...>')
+  .option('-A, --address <path>')
+  .option('-P, --password <path>')
+  .parse(process.argv);
+
+const getOrders = async (address) => {
+  const res = await axios.get("https://explorer.jccdex.cn/wallet/offer/e6236895?p=0&s=100&w=" + address);
+  if (res.status === 200 && res.data.code === "0") {
+    return res.data.data.list;
+  }
+}
+
+const cancelOrder = (address, secret, seq, timeout) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(async () => {
+      try {
+        const hash = await JCCExchange.cancelOrder(address, secret, seq);
+        resolve(hash);
+      } catch (error) {
+        reject(error);
+      }
+    }, timeout)
+  })
+}
+
+const cancelOrders = async () => {
+  const { address, password } = program;
+  const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
+  const instance = new JingchangWallet(JSON.parse(keystore), true, false);
+  const secret = await instance.getSecretWithAddress(password, address);
+  JCCExchange.init(["ejia348ffbda04.jccdex.cn"], 443, true);
+
+  while (true) {
+    try {
+      const orders = await getOrders(address)
+      if (!Array.isArray(orders) || orders.length === 0) {
+        break;
+      }
+      let hasFailed = false;
+      for (const key in orders) {
+        const seq = orders[key].seq;
+        try {
+          const hash = await cancelOrder(address, secret, seq, key === 0 ? 0 : 1000);
+          console.log("撤销成功: ", hash);
+        } catch (error) {
+          console.log("撤销失败: ", error);
+          hasFailed = true;
+        }
+      }
+      if (!hasFailed) {
+        break;
+      }
+    } catch (error) {}
+  }
+}
+
+cancelOrders()
