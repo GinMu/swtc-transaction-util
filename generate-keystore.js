@@ -1,16 +1,9 @@
-const program = require('commander');
 const fs = require("fs");
+const readlineSync = require('readline-sync');
+
 const { JingchangWallet, jtWallet } = require("jcc_wallet");
 
-program
-  .usage('[options] <file ...>')
-  .option('-s, --secret <path>')
-  .option('-p, --password <path>')
-  .parse(process.argv);
-
 const generateKeystore = async () => {
-  const secret = program.secret;
-  const password = program.password;
   const keystoreFile = "./keystore/wallet.json";
   try {
     let wallet;
@@ -21,6 +14,12 @@ const generateKeystore = async () => {
     }
 
     let newWallet;
+    const secret = readlineSync.question('Secret:', { hideEchoBack: true });
+    if (!jtWallet.isValidSecret(secret)) {
+      console.log('secret invalid, abort.');
+      return;
+    }
+    const password = readlineSync.question('Password:', { hideEchoBack: true });
     if (JingchangWallet.isValid(wallet)) {
       const instance = new JingchangWallet(JSON.parse(wallet), true, false);
       newWallet = await instance.importSecret(secret, password, "swt", jtWallet.getAddress);

@@ -1,13 +1,13 @@
 const BigNumber = require("bignumber.js");
 const program = require('commander');
 const fs = require("fs");
+const readlineSync = require('readline-sync');
 const JCCExchange = require("jcc_exchange").JCCExchange;
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 
 program
   .usage('[options] <file ...>')
   .option('-A, --address <path>')
-  .option('-P, --password <path>')
   .option('-a, --amount <path>')
   .option('-b, --base <path>')
   .option('-c, --counter <path>')
@@ -16,7 +16,8 @@ program
   .parse(process.argv);
 
 const deal = async () => {
-  const { counter, base, price, amount, type, address, password } = program;
+  const { counter, base, price, amount, type, address } = program;
+  const password = readlineSync.question('Password:', { hideEchoBack: true });
   try {
     const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
     const instance = new JingchangWallet(JSON.parse(keystore), true, false);

@@ -1,13 +1,13 @@
 const axios = require("axios");
 const program = require('commander');
 const fs = require("fs");
+const readlineSync = require('readline-sync');
 const JCCExchange = require("jcc_exchange").JCCExchange;
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 
 program
   .usage('[options] <file ...>')
   .option('-A, --address <path>')
-  .option('-P, --password <path>')
   .parse(process.argv);
 
 const getOrders = async (address) => {
@@ -31,7 +31,8 @@ const cancelOrder = (address, secret, seq, timeout) => {
 }
 
 const cancelOrders = async () => {
-  const { address, password } = program;
+  const { address } = program;
+  const password = readlineSync.question('Password:', { hideEchoBack: true });
   const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
   const instance = new JingchangWallet(JSON.parse(keystore), true, false);
   const secret = await instance.getSecretWithAddress(password, address);
