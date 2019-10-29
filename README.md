@@ -32,7 +32,6 @@ type="sell"
 node create-order.js -A $address -c $counter -b $base -p $price -a $amount -t $type
 
 # 取消所有挂单
-
 address #钱包地址
 
 node cancel-orders.js  -A $address
@@ -45,7 +44,6 @@ to #转入钱包地址
 node transfer-all-tokens.js -A $address -t $to
 
 # 转账
-
 address #钱包地址
 to #转入钱包地址
 currency #币种名称
