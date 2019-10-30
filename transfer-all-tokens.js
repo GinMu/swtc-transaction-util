@@ -35,15 +35,6 @@ const transfer = (address, secret, amount, to, token, timeout = 1000) => {
   })
 }
 
-const handleLongDigits = (value) => {
-  let effectiveNumberLimit = value.sd();
-  if (effectiveNumberLimit > 15) {
-    return value.precision(15, 1).toString(10);
-  } else {
-    return value.toString(10);
-  }
-}
-
 const transferTokens = async () => {
   const { address, to } = program;
   const password = readlineSync.question('Password:', { hideEchoBack: true });
@@ -60,10 +51,10 @@ const transferTokens = async () => {
       if (filterBalances.length === 0) {
         console.log("swt余额: ", swtBalance);
         // swt余额存在，且大于gas费0.0001
-        if (new BigNumber(swtBalance.value).minus(swtBalance.freezed).gt(0.0001)) {
+        const available = new BigNumber(swtBalance.value).minus(swtBalance.freezed)
+        if (available.gt(0.0001)) {
           try {
-            const transferSwtValue = new BigNumber(swtBalance.value).minus(swtBalance.freezed).minus(0.0001);
-            const amount = handleLongDigits(transferSwtValue);
+            const amount = available.minus(0.0001).precision(15, 1).toString(10);
             await transfer(address, secret, amount, to, "swt");
             console.log("转账成功:", swtBalance.currency);
             break;
@@ -83,8 +74,8 @@ const transferTokens = async () => {
         let hasFailed = false;
         for (const balance of filterBalances) {
           try {
-            const balanceValue = new BigNumber(balance.value).minus(balance.freezed);
-            const amount = handleLongDigits(balanceValue);
+            const available = new BigNumber(balance.value).minus(balance.freezed);
+            const amount = available.precision(15, 1).toString(10);
             await transfer(address, secret, amount, to, balance.currency);
             console.log("转账成功:", balance.currency);
           } catch (error) {
@@ -93,8 +84,8 @@ const transferTokens = async () => {
           }
         }
         try {
-          const swtBalanceValue = new BigNumber(swtBalance.value).minus(swtBalance.freezed).minus(gas);
-          const amount = handleLongDigits(swtBalanceValue);
+          const available = new BigNumber(swtBalance.value).minus(swtBalance.freezed).minus(gas);
+          const amount = available.precision(15, 1).toString(10);
           await transfer(address, secret, amount, to, "swt");
           console.log("转账成功:", swtBalance.currency);
         } catch (error) {
