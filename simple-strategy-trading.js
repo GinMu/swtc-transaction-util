@@ -43,11 +43,10 @@ const deal = async () => {
     const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
     const instance = new JingchangWallet(JSON.parse(keystore), true, false);
     const secret = await instance.getSecretWithAddress(password, address);
-    const amount = limitRandom(lowAmount, highAmount).toFixed(6);
-    const price = limitRandom(lowPrice, highPrice).toFixed(6);
-
     for (let index = 0; index < Number(quantity); index++) {
       try {
+        const amount = limitRandom(lowAmount, highAmount).toFixed(6);
+        const price = limitRandom(lowPrice, highPrice).toFixed(6);
         const sum = new BigNumber(price).multipliedBy(amount).precision(16, 1).toString(10);
         const hash = await createOrder(address, secret, amount, base, counter, sum, type, index === 0 ? 0 : 2000);
         console.log("挂单成功:", hash);
