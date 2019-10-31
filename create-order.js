@@ -6,13 +6,13 @@ const JingchangWallet = require("jcc_wallet").JingchangWallet;
 
 program
   .usage('[options] <file ...>')
-  .option('-A, --address <path>')
-  .option('-P, --password <path>')
-  .option('-a, --amount <path>')
-  .option('-b, --base <path>')
-  .option('-c, --counter <path>')
-  .option('-p, --price <path>')
-  .option('-t, --type <path>')
+  .option('-A, --address <path>', "钱包地址")
+  .option('-P, --password <path>', "keystore密码")
+  .option('-a, --amount <path>', "数量")
+  .option('-b, --base <path>', "token名称")
+  .option('-c, --counter <path>', "token名称")
+  .option('-p, --price <path>', "价格")
+  .option('-t, --type <path>', "买或卖")
   .parse(process.argv);
 
 const deal = async () => {

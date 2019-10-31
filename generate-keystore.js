@@ -4,8 +4,8 @@ const { JingchangWallet, jtWallet } = require("jcc_wallet");
 
 program
   .usage('[options] <file ...>')
-  .option('-s, --secret <path>')
-  .option('-p, --password <path>')
+  .option('-s, --secret <path>', "秘钥")
+  .option('-p, --password <path>', "密码")
   .parse(process.argv);
 
 const generateKeystore = async () => {

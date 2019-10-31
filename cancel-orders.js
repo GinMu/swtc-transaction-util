@@ -6,8 +6,8 @@ const JingchangWallet = require("jcc_wallet").JingchangWallet;
 
 program
   .usage('[options] <file ...>')
-  .option('-A, --address <path>')
-  .option('-P, --password <path>')
+  .option('-A, --address <path>', "钱包地址")
+  .option('-P, --password <path>', "keystore密码")
   .parse(process.argv);
 
 const getOrders = async (address) => {

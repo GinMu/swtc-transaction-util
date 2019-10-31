@@ -7,9 +7,9 @@ const JcExchange = require("jcc_rpc").JcExchange
 
 program
   .usage('[options] <file ...>')
-  .option('-A, --address <path>')
-  .option('-P, --password <path>')
-  .option('-t, --to <path>')
+  .option('-A, --address <path>', "钱包地址")
+  .option('-P, --password <path>', "keystore密码")
+  .option('-t, --to <path>', "转入钱包地址")
   .parse(process.argv);
 
 

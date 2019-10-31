@@ -5,12 +5,12 @@ const JingchangWallet = require("jcc_wallet").JingchangWallet;
 
 program
   .usage('[options] <file ...>')
-  .option('-A, --address <path>')
-  .option('-P, --password <path>')
-  .option('-c, --currency <path>')
-  .option('-a, --amount <path>')
-  .option('-t, --to <path>')
-  .option('-m, --memo <path>')
+  .option('-A, --address <path>', "钱包地址")
+  .option('-P, --password <path>', "keystore密码")
+  .option('-c, --currency <path>', "token名称")
+  .option('-a, --amount <path>', "数量")
+  .option('-t, --to <path>', "转入钱包地址")
+  .option('-m, --memo <path>', "备注")
   .parse(process.argv);
 
 const transfer = async () => {
