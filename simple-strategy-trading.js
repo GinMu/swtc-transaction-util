@@ -48,7 +48,7 @@ const deal = async () => {
         const amount = limitRandom(lowAmount, highAmount).toFixed(6);
         const price = limitRandom(lowPrice, highPrice).toFixed(6);
         const sum = new BigNumber(price).multipliedBy(amount).precision(16, 1).toString(10);
-        const hash = await createOrder(address, secret, amount, base, counter, sum, type, index === 0 ? 0 : 2000);
+        const hash = await createOrder(address, secret, amount, base, counter, sum, type, index === 0 ? 0 : 500);
         console.log("挂单成功:", hash);
       } catch (error) {
         console.log("挂单失败:", error.message);

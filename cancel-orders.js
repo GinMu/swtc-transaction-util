@@ -47,7 +47,7 @@ const cancelOrders = async () => {
       for (const key in list) {
         const seq = list[key].seq;
         try {
-          const hash = await cancelOrder(address, secret, seq, key === 0 ? 0 : 1000);
+          const hash = await cancelOrder(address, secret, seq, key === 0 ? 0 : 500);
           console.log("撤销成功: ", hash);
         } catch (error) {
           console.log("撤销失败: ", error);
