@@ -1,7 +1,9 @@
+const BigNumber = require("bignumber.js");
 const program = require('commander');
 const fs = require("fs");
 const JCCExchange = require("jcc_exchange").JCCExchange;
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
+const config = require("./config");
 
 program
   .usage('[options] <file ...>')
@@ -19,7 +21,7 @@ const transfer = async () => {
     const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
     const instance = new JingchangWallet(JSON.parse(keystore), true, false);
     const secret = await instance.getSecretWithAddress(password, address);
-    JCCExchange.init(["ejia348ffbda04.jccdex.cn"], 443, true);
+    JCCExchange.init(config.nodes);
     let hash = await JCCExchange.transfer(address, secret, amount, memo, to, currency);
     console.log("转账成功: ", hash);
   } catch (error) {

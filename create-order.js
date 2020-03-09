@@ -3,6 +3,7 @@ const program = require('commander');
 const fs = require("fs");
 const JCCExchange = require("jcc_exchange").JCCExchange;
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
+const config = require("./config");
 
 program
   .usage('[options] <file ...>')
@@ -22,7 +23,7 @@ const deal = async () => {
     const instance = new JingchangWallet(JSON.parse(keystore), true, false);
     const secret = await instance.getSecretWithAddress(password, address);
     const sum = new BigNumber(price).multipliedBy(amount).toString(10);
-    JCCExchange.init(["ejia348ffbda04.jccdex.cn"], 443, true);
+    JCCExchange.init(config.nodes);
     const hash = await JCCExchange.createOrder(address, secret, amount, base, counter, sum, type, address);
     console.log("挂单成功:", hash);
   } catch (error) {

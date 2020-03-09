@@ -3,6 +3,7 @@ const program = require('commander');
 const fs = require("fs");
 const JCCExchange = require("jcc_exchange").JCCExchange;
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
+const config = require("./config");
 
 program
   .usage('[options] <file ...>')
@@ -39,7 +40,7 @@ const limitRandom = (min, max) => {
 const deal = async () => {
   const { address, password, base, counter, highAmount, lowAmount, highPrice, lowPrice, quantity, type } = program;
   try {
-    JCCExchange.init(["ejia348ffbda04.jccdex.cn"], 443, true);
+    JCCExchange.init(config.nodes);
     const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
     const instance = new JingchangWallet(JSON.parse(keystore), true, false);
     const secret = await instance.getSecretWithAddress(password, address);
