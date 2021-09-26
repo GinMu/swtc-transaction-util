@@ -1,7 +1,7 @@
 const BigNumber = require("bignumber.js");
 const program = require('commander');
 const fs = require("fs");
-const JCCExchange = require("jcc_exchange").JCCExchange;
+const {Transaction} = require("@jccdex/jingtum-lib");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 const config = require("./config");
 
@@ -23,8 +23,8 @@ const deal = async () => {
     const instance = new JingchangWallet(JSON.parse(keystore), true, false);
     const secret = await instance.getSecretWithAddress(password, address);
     const sum = new BigNumber(price).multipliedBy(amount).toString(10);
-    JCCExchange.init(config.nodes);
-    const hash = await JCCExchange.createOrder(address, secret, amount, base, counter, sum, type, address);
+    const transaction = new Transaction("jingtum", config.nodes, 3);
+    const hash = await transaction.createOrder(address, secret, amount, base, counter, sum, type, address);
     console.log("挂单成功:", hash);
   } catch (error) {
     console.log("挂单失败:", error.message);

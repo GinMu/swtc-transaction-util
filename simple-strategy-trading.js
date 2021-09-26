@@ -1,7 +1,7 @@
 const BigNumber = require("bignumber.js");
 const program = require('commander');
 const fs = require("fs");
-const JCCExchange = require("jcc_exchange").JCCExchange;
+const {Transaction} = require("@jccdex/jingtum-lib");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 const config = require("./config");
 
@@ -19,11 +19,13 @@ program
   .option('-t, --type <path>', "买或卖")
   .parse(process.argv);
 
+const transaction = new Transaction("jingtum", config.nodes, 3)
+  
 const createOrder = (address, secret, amount, base, counter, sum, type, timeout = 1000) => {
   return new Promise((resolve, reject) => {
     setTimeout(async () => {
       try {
-        const hash = await JCCExchange.createOrder(address, secret, amount, base, counter, sum, type);
+        const hash = await transaction.createOrder(address, secret, amount, base, counter, sum, type);
         resolve(hash);
       } catch (error) {
         reject(error);
@@ -40,7 +42,6 @@ const limitRandom = (min, max) => {
 const deal = async () => {
   const { address, password, base, counter, highAmount, lowAmount, highPrice, lowPrice, quantity, type } = program;
   try {
-    JCCExchange.init(config.nodes);
     const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
     const instance = new JingchangWallet(JSON.parse(keystore), true, false);
     const secret = await instance.getSecretWithAddress(password, address);

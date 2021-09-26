@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/GinMu/swtc-transaction-util#readme",
   "dependencies": {
+    "@jccdex/jingtum-lib": "^0.0.3",
     "bignumber.js": "^9.0.0",
     "commander": "^3.0.2",
-    "jcc_exchange": "^3.1.0",
     "jcc_wallet": "^1.0.5"
   }
 }

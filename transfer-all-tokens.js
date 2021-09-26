@@ -1,7 +1,7 @@
 const BigNumber = require("bignumber.js");
 const program = require('commander');
 const fs = require("fs");
-const JCCExchange = require("jcc_exchange").JCCExchange;
+const {Transaction} = require("@jccdex/jingtum-lib");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 const JcExchange = require("jcc_rpc").JcExchange
 const config = require("./config");
@@ -13,7 +13,7 @@ program
   .option('-t, --to <path>', "转入钱包地址")
   .parse(process.argv);
 
-
+const transaction = new Transaction("jingtum", config.nodes, 3);
 const getBalance = async (address) => {
   const inst = new JcExchange(["ejia348ffbda04.jccdex.cn"], 443, true);
   const res = await inst.getBalances(address);
@@ -27,7 +27,7 @@ const transfer = (address, secret, amount, to, token, timeout = 1000) => {
   return new Promise((resolve, reject) => {
     setTimeout(async () => {
       try {
-        const hash = await JCCExchange.transfer(address, secret, amount, "", to, token);
+        const hash = await transaction.transfer(address, secret, amount, "", to, token);
         resolve(hash);
       } catch (error) {
         reject(error);
@@ -41,7 +41,6 @@ const transferTokens = async () => {
   const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
   const instance = new JingchangWallet(JSON.parse(keystore), true, false);
   const secret = await instance.getSecretWithAddress(password, address);
-  JCCExchange.init(config.nodes);
 
   while (true) {
     try {

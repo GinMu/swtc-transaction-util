@@ -1,8 +1,8 @@
 const axios = require("axios");
 const program = require('commander');
 const fs = require("fs");
-const JCCExchange = require("jcc_exchange").JCCExchange;
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
+const {Transaction} = require("@jccdex/jingtum-lib");
 const config = require("./config");
 
 program
@@ -10,6 +10,8 @@ program
   .option('-A, --address <path>', "钱包地址")
   .option('-P, --password <path>', "keystore密码")
   .parse(process.argv);
+
+const transaction = new Transaction("jingtum", config.nodes, 3);  
 
 const getOrders = async (address) => {
   const res = await axios.get("https://explorer.jccdex.cn/wallet/offer/e6236895?p=0&s=100&w=" + address);
@@ -22,7 +24,7 @@ const cancelOrder = (address, secret, seq, timeout) => {
   return new Promise((resolve, reject) => {
     setTimeout(async () => {
       try {
-        const hash = await JCCExchange.cancelOrder(address, secret, seq);
+        const hash = await transaction.cancelOrder(address, secret, seq);
         resolve(hash);
       } catch (error) {
         reject(error);
@@ -36,7 +38,6 @@ const cancelOrders = async () => {
   const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
   const instance = new JingchangWallet(JSON.parse(keystore), true, false);
   const secret = await instance.getSecretWithAddress(password, address);
-  JCCExchange.init(config.nodes);
 
   while (true) {
     try {
