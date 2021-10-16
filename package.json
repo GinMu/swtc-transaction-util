@@ -20,6 +20,7 @@
     "@jccdex/jingtum-lib": "^0.0.3",
     "bignumber.js": "^9.0.0",
     "commander": "^3.0.2",
+    "jcc_rpc": "^0.3.2",
     "jcc_wallet": "^1.0.5"
   }
 }

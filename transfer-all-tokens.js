@@ -1,9 +1,9 @@
 const BigNumber = require("bignumber.js");
 const program = require('commander');
 const fs = require("fs");
-const {Transaction} = require("@jccdex/jingtum-lib");
+const { Transaction } = require("@jccdex/jingtum-lib");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
-const JcExchange = require("jcc_rpc").JcExchange
+const ExplorerFactory = require("jcc_rpc").ExplorerFactory;
 const config = require("./config");
 
 program
@@ -14,13 +14,33 @@ program
   .parse(process.argv);
 
 const transaction = new Transaction("jingtum", config.nodes, 3);
+
+const explorerInst = ExplorerFactory.init(["https://swtcscan.jccdex.cn"]);
+
 const getBalance = async (address) => {
-  const inst = new JcExchange(["ejia348ffbda04.jccdex.cn"], 443, true);
-  const res = await inst.getBalances(address);
+  const res = await explorerInst.getBalances(address, address);
   if (!res.result) {
-    throw new Error(res.msg);
+    return null;
   }
-  return res.data;
+  const data = res.data;
+  delete data._id;
+  delete data.feeflag;
+  const balances = [];
+  for (const key in data) {
+    if (Object.hasOwnProperty.call(data, key)) {
+      const d = data[key];
+      if (key === "SWTC") {
+        balances.push(Object.assign(d, {currency: "SWT"}))
+      } else {
+        balances.push(Object.assign(d, {currency: key.split("_")[0]}))
+      }
+    }
+  }
+  return balances;
+};
+
+const sleep = async (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const transfer = (address, secret, amount, to, token, timeout = 1000) => {
@@ -46,11 +66,11 @@ const transferTokens = async () => {
     try {
       const balances = await getBalance(address);
       const swtBalance = balances.find((balance) => balance.currency === "SWT");
-      const filterBalances = balances.filter((balance) => balance.currency !== "SWT" && new BigNumber(balance.value).minus(balance.freezed).gt(0));
+      const filterBalances = balances.filter((balance) => balance.currency !== "SWT" && new BigNumber(balance.value).minus(balance.frozen).gt(0));
       if (filterBalances.length === 0) {
         console.log("swt余额: ", swtBalance);
         // swt余额存在，且大于gas费0.0001
-        const available = new BigNumber(swtBalance.value).minus(swtBalance.freezed)
+        const available = new BigNumber(swtBalance.value).minus(swtBalance.frozen)
         if (available.gt(0.0001)) {
           try {
             const amount = available.minus(0.0001).precision(15, 1).toString(10);
@@ -67,13 +87,13 @@ const transferTokens = async () => {
       } else {
         const gas = new BigNumber(0.0001).multipliedBy(filterBalances.length).toString(10);
         // 如果swt余额小于将要消耗的gas
-        if (new BigNumber(swtBalance.value).minus(swtBalance.freezed).lt(gas)) {
+        if (new BigNumber(swtBalance.value).minus(swtBalance.frozen).lt(gas)) {
           break;
         }
         let hasFailed = false;
         for (const balance of filterBalances) {
           try {
-            const available = new BigNumber(balance.value).minus(balance.freezed);
+            const available = new BigNumber(balance.value).minus(balance.frozen);
             const amount = available.precision(15, 1).toString(10);
             await transfer(address, secret, amount, to, balance.currency);
             console.log("转账成功:", balance.currency);
@@ -83,7 +103,7 @@ const transferTokens = async () => {
           }
         }
         try {
-          const available = new BigNumber(swtBalance.value).minus(swtBalance.freezed).minus(gas);
+          const available = new BigNumber(swtBalance.value).minus(swtBalance.frozen).minus(gas);
           const amount = available.precision(15, 1).toString(10);
           await transfer(address, secret, amount, to, "swt");
           console.log("转账成功:", swtBalance.currency);
@@ -101,6 +121,7 @@ const transferTokens = async () => {
       console.log(error)
       break
     }
+    await sleep(30000);
   }
 }
 
