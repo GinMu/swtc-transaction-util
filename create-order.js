@@ -1,19 +1,19 @@
 const BigNumber = require("bignumber.js");
-const program = require('commander');
+const program = require("commander");
 const fs = require("fs");
-const {Transaction} = require("@jccdex/jingtum-lib");
+const { Transaction } = require("@jccdex/jingtum-lib");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 const config = require("./config");
 
 program
-  .usage('[options] <file ...>')
-  .option('-A, --address <path>', "钱包地址")
-  .option('-P, --password <path>', "keystore密码")
-  .option('-a, --amount <path>', "数量")
-  .option('-b, --base <path>', "token名称")
-  .option('-c, --counter <path>', "token名称")
-  .option('-p, --price <path>', "价格")
-  .option('-t, --type <path>', "买或卖")
+  .usage("[options] <file ...>")
+  .option("-A, --address <path>", "钱包地址")
+  .option("-P, --password <path>", "keystore密码")
+  .option("-a, --amount <path>", "数量")
+  .option("-b, --base <path>", "token名称")
+  .option("-c, --counter <path>", "token名称")
+  .option("-p, --price <path>", "价格")
+  .option("-t, --type <path>", "买或卖")
   .parse(process.argv);
 
 const deal = async () => {
@@ -29,6 +29,6 @@ const deal = async () => {
   } catch (error) {
     console.log("挂单失败:", error.message);
   }
-}
+};
 
 deal();

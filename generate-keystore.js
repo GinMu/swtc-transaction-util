@@ -1,11 +1,11 @@
-const program = require('commander');
+const program = require("commander");
 const fs = require("fs");
 const { JingchangWallet, jtWallet } = require("jcc_wallet");
 
 program
-  .usage('[options] <file ...>')
-  .option('-s, --secret <path>', "秘钥")
-  .option('-p, --password <path>', "密码")
+  .usage("[options] <file ...>")
+  .option("-s, --secret <path>", "秘钥")
+  .option("-p, --password <path>", "密码")
   .parse(process.argv);
 
 const generateKeystore = async () => {
@@ -31,6 +31,6 @@ const generateKeystore = async () => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 generateKeystore();

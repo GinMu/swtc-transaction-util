@@ -1,24 +1,24 @@
 const axios = require("axios");
-const program = require('commander');
+const program = require("commander");
 const fs = require("fs");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
-const {Transaction} = require("@jccdex/jingtum-lib");
+const { Transaction } = require("@jccdex/jingtum-lib");
 const config = require("./config");
 
 program
-  .usage('[options] <file ...>')
-  .option('-A, --address <path>', "钱包地址")
-  .option('-P, --password <path>', "keystore密码")
+  .usage("[options] <file ...>")
+  .option("-A, --address <path>", "钱包地址")
+  .option("-P, --password <path>", "keystore密码")
   .parse(process.argv);
 
-const transaction = new Transaction("jingtum", config.nodes, 3);  
+const transaction = new Transaction("jingtum", config.nodes, 3);
 
 const getOrders = async (address) => {
   const res = await axios.get("https://explorer.jccdex.cn/wallet/offer/e6236895?p=0&s=100&w=" + address);
   if (res.status === 200 && res.data.code === "0") {
     return res.data.data;
   }
-}
+};
 
 const cancelOrder = (address, secret, seq, timeout) => {
   return new Promise((resolve, reject) => {
@@ -29,9 +29,9 @@ const cancelOrder = (address, secret, seq, timeout) => {
       } catch (error) {
         reject(error);
       }
-    }, timeout)
-  })
-}
+    }, timeout);
+  });
+};
 
 const cancelOrders = async () => {
   const { address, password } = program;
@@ -41,7 +41,7 @@ const cancelOrders = async () => {
 
   while (true) {
     try {
-      const { list, count } = await getOrders(address)
+      const { list, count } = await getOrders(address);
       if (!Array.isArray(list) || list.length === 0) {
         break;
       }
@@ -63,6 +63,6 @@ const cancelOrders = async () => {
       console.log(error);
     }
   }
-}
+};
 
-cancelOrders()
+cancelOrders();

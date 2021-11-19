@@ -4,7 +4,9 @@
   "description": "命令行钱包操作和交易工具",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "husky install",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretty": "pretty-quick --staged"
   },
   "repository": {
     "type": "git",
@@ -23,5 +25,10 @@
     "commander": "^3.0.2",
     "jcc_rpc": "^0.3.2",
     "jcc_wallet": "^1.0.5"
+  },
+  "devDependencies": {
+    "husky": "^7.0.4",
+    "prettier": "^2.4.1",
+    "pretty-quick": "^3.1.2"
   }
 }

@@ -1,26 +1,26 @@
 const BigNumber = require("bignumber.js");
-const program = require('commander');
+const program = require("commander");
 const fs = require("fs");
-const {Transaction} = require("@jccdex/jingtum-lib");
+const { Transaction } = require("@jccdex/jingtum-lib");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 const config = require("./config");
 
 program
-  .usage('[options] <file ...>')
-  .option('-A, --address <path>', "钱包地址")
-  .option('-P, --password <path>', "keystore密码")
-  .option('-b, --base <path>', "token名称")
-  .option('-c, --counter <path>', "token名称")
-  .option('-H, --highAmount <path>', "数量上限")
-  .option('-L, --lowAmount <path>', "数量下限")
-  .option('-h, --highPrice <path>', "价格上限")
-  .option('-l, --lowPrice <path>', "价格下限")
-  .option('-q, --quantity <path>', "挂单数量")
-  .option('-t, --type <path>', "买或卖")
+  .usage("[options] <file ...>")
+  .option("-A, --address <path>", "钱包地址")
+  .option("-P, --password <path>", "keystore密码")
+  .option("-b, --base <path>", "token名称")
+  .option("-c, --counter <path>", "token名称")
+  .option("-H, --highAmount <path>", "数量上限")
+  .option("-L, --lowAmount <path>", "数量下限")
+  .option("-h, --highPrice <path>", "价格上限")
+  .option("-l, --lowPrice <path>", "价格下限")
+  .option("-q, --quantity <path>", "挂单数量")
+  .option("-t, --type <path>", "买或卖")
   .parse(process.argv);
 
-const transaction = new Transaction("jingtum", config.nodes, 3)
-  
+const transaction = new Transaction("jingtum", config.nodes, 3);
+
 const createOrder = (address, secret, amount, base, counter, sum, type, timeout = 1000) => {
   return new Promise((resolve, reject) => {
     setTimeout(async () => {
@@ -30,14 +30,14 @@ const createOrder = (address, secret, amount, base, counter, sum, type, timeout 
       } catch (error) {
         reject(error);
       }
-    }, timeout)
-  })
-}
+    }, timeout);
+  });
+};
 
 const limitRandom = (min, max) => {
   const value = Math.random() * (parseFloat(max) - parseFloat(min)) + parseFloat(min);
   return value;
-}
+};
 
 const deal = async () => {
   const { address, password, base, counter, highAmount, lowAmount, highPrice, lowPrice, quantity, type } = program;
@@ -59,6 +59,6 @@ const deal = async () => {
   } catch (error) {
     console.log("挂单失败:", error.message);
   }
-}
+};
 
 deal();
