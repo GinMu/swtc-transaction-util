@@ -4,6 +4,7 @@ const fs = require("fs");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 const { Transaction } = require("@jccdex/jingtum-lib");
 const config = require("./config");
+const sleep = require("./utils/sleep");
 
 program
   .usage("[options] <file ...>")
@@ -20,17 +21,10 @@ const getOrders = async (address) => {
   }
 };
 
-const cancelOrder = (address, secret, seq, timeout) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(async () => {
-      try {
-        const hash = await transaction.cancelOrder(address, secret, seq);
-        resolve(hash);
-      } catch (error) {
-        reject(error);
-      }
-    }, timeout);
-  });
+const cancelOrder = async (address, secret, seq, timeout) => {
+  await sleep(timeout);
+  const hash = await transaction.cancelOrder(address, secret, seq);
+  return hash;
 };
 
 const cancelOrders = async () => {

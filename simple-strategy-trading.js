@@ -4,6 +4,7 @@ const fs = require("fs");
 const { Transaction } = require("@jccdex/jingtum-lib");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 const config = require("./config");
+const sleep = require("./utils/sleep");
 
 program
   .usage("[options] <file ...>")
@@ -21,17 +22,10 @@ program
 
 const transaction = new Transaction("jingtum", config.nodes, 3);
 
-const createOrder = (address, secret, amount, base, counter, sum, type, timeout = 1000) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(async () => {
-      try {
-        const hash = await transaction.createOrder(address, secret, amount, base, counter, sum, type);
-        resolve(hash);
-      } catch (error) {
-        reject(error);
-      }
-    }, timeout);
-  });
+const createOrder = async (address, secret, amount, base, counter, sum, type, timeout = 1000) => {
+  await sleep(timeout);
+  const hash = await transaction.createOrder(address, secret, amount, base, counter, sum, type);
+  return hash;
 };
 
 const limitRandom = (min, max) => {

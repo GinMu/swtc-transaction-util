@@ -5,6 +5,7 @@ const { Transaction } = require("@jccdex/jingtum-lib");
 const JingchangWallet = require("jcc_wallet").JingchangWallet;
 const ExplorerFactory = require("jcc_rpc").ExplorerFactory;
 const config = require("./config");
+const sleep = require("./utils/sleep");
 
 program
   .usage("[options] <file ...>")
@@ -43,17 +44,10 @@ const sleep = async (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const transfer = (address, secret, amount, to, token, timeout = 1000) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(async () => {
-      try {
-        const hash = await transaction.transfer(address, secret, amount, "", to, token);
-        resolve(hash);
-      } catch (error) {
-        reject(error);
-      }
-    }, timeout);
-  });
+const transfer = async (address, secret, amount, to, token, timeout = 1000) => {
+  await sleep(timeout);
+  const hash = await transaction.transfer(address, secret, amount, "", to, token);
+  return hash;
 };
 
 const transferTokens = async () => {
