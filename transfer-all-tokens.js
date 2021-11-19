@@ -40,10 +40,6 @@ const getBalance = async (address) => {
   return balances;
 };
 
-const sleep = async (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
 const transfer = async (address, secret, amount, to, token, timeout = 1000) => {
   await sleep(timeout);
   const hash = await transaction.transfer(address, secret, amount, "", to, token);
