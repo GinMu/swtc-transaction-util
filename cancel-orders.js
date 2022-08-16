@@ -32,9 +32,13 @@ const cancelOrders = async () => {
   const keystore = fs.readFileSync("./keystore/wallet.json", { encoding: "utf-8" });
   const instance = new JingchangWallet(JSON.parse(keystore), true, false);
   const secret = await instance.getSecretWithAddress(password, address);
-
+  let start = false;
   while (true) {
     try {
+      if (start) {
+        await sleep(30 * 1000);
+      }
+      start = true;
       const { list, count } = await getOrders(address);
       if (!Array.isArray(list) || list.length === 0) {
         break;
